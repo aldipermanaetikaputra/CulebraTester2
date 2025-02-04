@@ -34,22 +34,26 @@ class Am {
             val p = pb.start()
             val stdOut = IOUtils.toString(p.inputStream, Charsets.UTF_8)
             val stdErr = IOUtils.toString(p.errorStream, Charsets.UTF_8)
-            val exitStatus = run {
-                val timeoutMillis = TimeUnit.SECONDS.toMillis(30)
-                val startTime = System.currentTimeMillis()
-                while (true) {
-                    try {
-                        p.exitValue()  // Process terminated
-                        break true
-                    } catch (e: IllegalThreadStateException) {
-                        // Process still running; continue looping
-                    }
-                    if (System.currentTimeMillis() - startTime > timeoutMillis) {
-                        break false
-                    }
-                    Thread.sleep(50)
+
+            var exitStatus = false
+            val timeoutMillis = TimeUnit.SECONDS.toMillis(30)
+            val startTime = System.currentTimeMillis()
+
+            while (true) {
+                try {
+                    p.exitValue() // Process terminated
+                    exitStatus = true
+                    break
+                } catch (e: IllegalThreadStateException) {
+                    // Process still running, continue looping
                 }
+                if (System.currentTimeMillis() - startTime > timeoutMillis) {
+                    exitStatus = false
+                    break
+                }
+                Thread.sleep(50)
             }
+            
             println("$command: exit status: $exitStatus")
             return if (exitStatus) {
                 StatusResponse(StatusResponse.Status.OK)
