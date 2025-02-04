@@ -92,11 +92,22 @@ class Device {
             val p = pb.start()
             val stdOut = IOUtils.toString(p.inputStream, Charsets.UTF_8)
             val stdErr = IOUtils.toString(p.errorStream, Charsets.UTF_8)
-            val startTime = System.currentTimeMillis()
-            while (p.isAlive && (System.currentTimeMillis() - startTime) < 30_000) {
-                Thread.sleep(100)
+            val exitStatus = run {
+                val timeoutMillis = TimeUnit.SECONDS.toMillis(30)
+                val startTime = System.currentTimeMillis()
+                while (true) {
+                    try {
+                        p.exitValue()  // Process terminated
+                        break true
+                    } catch (e: IllegalThreadStateException) {
+                        // Process still running; continue looping
+                    }
+                    if (System.currentTimeMillis() - startTime > timeoutMillis) {
+                        break false
+                    }
+                    Thread.sleep(50)
+                }
             }
-            val exitStatus = !p.isAlive
             println("dumpsys exit status: $exitStatus")
             return if (exitStatus) {
                 stdOut
