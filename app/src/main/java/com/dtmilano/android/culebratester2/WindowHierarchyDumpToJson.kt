@@ -11,7 +11,7 @@ import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.io.StringWriter
 import java.time.Instant
-import java.time.format.DateTimeFormatter
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
 import javax.xml.parsers.ParserConfigurationException
@@ -197,7 +197,13 @@ class WindowHierarchyDumpToJsonHandler : DefaultHandler() {
                 mJsonWriter!!.beginObject()
                 mJsonWriter!!.name("id")?.value("hierarchy")
                 mJsonWriter!!.name("text")?.value("Window Hierarchy")
-                val timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
+
+                // Create a Date object and format it as ISO 8601 string in UTC.
+                val date = Date()
+                val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
+                sdf.timeZone = TimeZone.getTimeZone("UTC")
+                val timestamp = sdf.format(date)
+
                 mJsonWriter!!.name("timestamp")?.value(timestamp)
                 mJsonWriter!!.name("children")
                 mJsonWriter!!.beginArray()
