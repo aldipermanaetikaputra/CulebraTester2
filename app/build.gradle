@@ -17,7 +17,7 @@ android {
     compileSdk 33
     defaultConfig {
         applicationId "com.dtmilano.android.culebratester2"
-        minSdk 26
+        minSdk 22
         targetSdk 33
         versionCode 20073
         versionName "2.0.73-alpha"
