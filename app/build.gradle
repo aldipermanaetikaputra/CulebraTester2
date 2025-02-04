@@ -15,7 +15,6 @@ ext {
 
 android {
     compileSdk 33
-
     defaultConfig {
         applicationId "com.dtmilano.android.culebratester2"
         minSdk 26
