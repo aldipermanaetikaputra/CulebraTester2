@@ -357,7 +357,7 @@ suspend fun java.lang.reflect.Method.invokeSuspend(obj: Any?, args: List<Any?>):
 }
 
 fun <T : Annotation> java.lang.reflect.Method.getAnnotationInAncestors(clazz: Class<T>): T? {
-    val res = this.getAnnotation(clazz) ?: this.getDeclaredAnnotation(clazz)
+    val res = this.getAnnotation(clazz) ?: this.declaredAnnotations.firstOrNull { clazz.isInstance(it) } as? T
     if (res != null) return res
 
     // Try interfaces
