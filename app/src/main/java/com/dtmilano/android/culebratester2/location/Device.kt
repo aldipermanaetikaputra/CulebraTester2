@@ -92,7 +92,11 @@ class Device {
             val p = pb.start()
             val stdOut = IOUtils.toString(p.inputStream, Charsets.UTF_8)
             val stdErr = IOUtils.toString(p.errorStream, Charsets.UTF_8)
-            val exitStatus = p.waitFor(30, TimeUnit.SECONDS)
+            val startTime = System.currentTimeMillis()
+            while (p.isAlive && (System.currentTimeMillis() - startTime) < 30_000) {
+                Thread.sleep(100)
+            }
+            val exitStatus = !p.isAlive
             println("dumpsys exit status: $exitStatus")
             return if (exitStatus) {
                 stdOut
